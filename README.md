@@ -1,6 +1,6 @@
 <img heigth="4" src="https://i.imgur.com/JdFmK57.png" align="center" alt="neutrino">
 
-<h1 align="center">inception-raylib</h1>
+<h1 align="center">raylib-inception</h1>
 
 <p align="center"><i>Some examples of old-fashioned computer graphics</i></p>
 
@@ -21,7 +21,7 @@
 
 ## Motivation
 
-`inception-raylib` is just..
+`raylib-inception` is just..
 
 > *“A great maxim of personal responsibility and mature achievement: “Do it yourself” is now the enthroned cliche for being occupied with nonessentials.”*
 
