@@ -103,8 +103,8 @@ fn draw_next_frame(screen:  &mut [Color], fire_buf: &mut [u8], pal: &[Color], rn
 
     draw_palette(screen, pal);
     fill_bottom_with_random_ashes(fire_buf, rng);
+    calculate_next_fire_frame(fire_buf);
     convert_fire_buffer_to_screen(fire_buf, pal, screen);
-
 }
 
 fn generate_palette() -> [Color; 256] {
@@ -132,9 +132,6 @@ fn draw_palette(screen:  &mut [Color], pal: &[Color]) {
     for i in 0..pal.len() {
         let init = i * 400 + 50;
         let pixels = &mut screen[ init..(init + 4) ];
-        // for i in 0..400 {
-        //     pixels[i] = pal[i]
-        // }
         pixels[0] = pal[i];
         pixels[1] = pal[i];
         pixels[2] = pal[i];
@@ -156,5 +153,24 @@ fn convert_fire_buffer_to_screen(fire_buf: &[u8], pal: &[Color], screen:  &mut [
     for i in 0..fire_buf.len() {
         let heat = fire_buf[i] as usize;
         screen[i] = pal[ heat ];
+    }
+}
+
+fn calculate_next_fire_frame(fire_buf: &mut [u8]) {
+    let mut old_fire_buf = [0u8; 400 * 300];
+    old_fire_buf.clone_from_slice(fire_buf);
+
+    for y in 0..299 {
+        for x in 1..399 {
+            let i = y * 400 + x;
+            fire_buf[i] = ((
+                    10 * old_fire_buf[i - 1] as u64
+                +   20 * old_fire_buf[i + 0] as u64
+                +   10 * old_fire_buf[i + 1] as u64
+                +   160 * old_fire_buf[i - 1 + 400] as u64
+                +   320 * old_fire_buf[i + 0 + 400] as u64
+                +   160 * old_fire_buf[i + 1 + 400] as u64 
+            ) / 680) as u8;
+        }
     }
 }
