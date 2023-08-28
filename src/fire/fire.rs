@@ -16,8 +16,8 @@ use raylib_ffi::{
 use std::ffi::c_void;
 use tinyrand::{StdRand, Wyrand, RandRange};
 
-const WIDTH: i32 = 600;
-const HEIGHT: i32 = 400; 
+const WIDTH: i32 = 640;
+const HEIGHT: i32 = 480; 
 
 pub fn generate() {
     init_gui();
