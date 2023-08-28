@@ -1,7 +1,10 @@
-mod fire;
 mod hello;
+mod fire;
+mod pong;
+mod core;
 
 fn main() {
+    // hello::say_hello()
     // fire::generate()
-    hello::say_hello();
+    pong::start()
 }
