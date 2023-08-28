@@ -1,5 +1,7 @@
 mod fire;
+mod hello;
 
 fn main() {
-    fire::generate()
+    // fire::generate()
+    hello::say_hello();
 }
