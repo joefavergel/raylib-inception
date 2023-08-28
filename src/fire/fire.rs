@@ -16,20 +16,23 @@ use raylib_ffi::{
 use std::ffi::c_void;
 use tinyrand::{StdRand, Wyrand, RandRange};
 
+const WIDTH: i32 = 600;
+const HEIGHT: i32 = 400; 
+
 pub fn generate() {
     init_gui();
 
-    let mut screen_buffer_data = [Color{r:0, b:0, g:0, a:0} ; 400*300];
+    let mut screen_buffer_data = [ Color{r:0, b:0, g:0, a:0}; (WIDTH * HEIGHT) as usize ];
     let screen_buffer = Image {
         data: screen_buffer_data.as_mut_ptr() as *mut c_void,
-        width: 400,
-        height: 300,
+        width: WIDTH,
+        height: HEIGHT,
         mipmaps: 1,
         format: enums::PixelFormat::R8g8b8a8 as i32
     };
     let screen_buffer_texture = load_texture_from_image(screen_buffer);
     let palette = generate_palette();
-    let mut fire_buffer = [ 0u8; 400 * 300 ];
+    let mut fire_buffer = [ 0u8; (WIDTH * HEIGHT) as usize ];
     let mut rng = StdRand::default();
 
     while ! window_should_close() {
@@ -46,7 +49,7 @@ pub fn generate() {
 
 fn init_gui() {
     unsafe {
-        InitWindow(400, 300, "Fire".as_ptr() as *const i8)
+        InitWindow(WIDTH, HEIGHT, "Fire".as_ptr() as *const i8)
     }
 }
 
@@ -130,7 +133,7 @@ fn generate_palette() -> [Color; 256] {
 
 fn draw_palette(screen:  &mut [Color], pal: &[Color]) {
     for i in 0..pal.len() {
-        let init = i * 400 + 50;
+        let init = i * (WIDTH as usize) + 50;
         let pixels = &mut screen[ init..(init + 4) ];
         pixels[0] = pal[i];
         pixels[1] = pal[i];
@@ -141,7 +144,7 @@ fn draw_palette(screen:  &mut [Color], pal: &[Color]) {
 
 fn fill_bottom_with_random_ashes(fire_buf: &mut [u8], rng: &mut Wyrand) {
     let end = fire_buf.len();
-    let start = end - 400;
+    let start = end - WIDTH as usize;
     for i in start..end {
         fire_buf[i] = rng.next_range(0..256u16) as u8;
     }
@@ -157,19 +160,19 @@ fn convert_fire_buffer_to_screen(fire_buf: &[u8], pal: &[Color], screen:  &mut [
 }
 
 fn calculate_next_fire_frame(fire_buf: &mut [u8]) {
-    let mut old_fire_buf = [0u8; 400 * 300];
+    let mut old_fire_buf = [ 0u8; (WIDTH * HEIGHT) as usize ];
     old_fire_buf.clone_from_slice(fire_buf);
 
-    for y in 0..299 {
-        for x in 1..399 {
-            let i = y * 400 + x;
+    for y in 0..((HEIGHT - 1) as usize) {
+        for x in 1..((WIDTH - 1) as usize) {
+            let i = y * (WIDTH as usize) + x;
             fire_buf[i] = ((
                     10 * old_fire_buf[i - 1] as u64
                 +   20 * old_fire_buf[i + 0] as u64
                 +   10 * old_fire_buf[i + 1] as u64
-                +   160 * old_fire_buf[i - 1 + 400] as u64
-                +   320 * old_fire_buf[i + 0 + 400] as u64
-                +   160 * old_fire_buf[i + 1 + 400] as u64 
+                +   160 * old_fire_buf[i - 1 + (WIDTH as usize)] as u64
+                +   320 * old_fire_buf[i + 0 + (WIDTH as usize)] as u64
+                +   160 * old_fire_buf[i + 1 + (WIDTH as usize)] as u64 
             ) / 680) as u8;
         }
     }
